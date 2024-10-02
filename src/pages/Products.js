@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import UserContext from '../context/UserContext';
 import UserView from '../components/UserView'; // Assuming you have a UserView for non-admins
 import AdminView from '../components/AdminView'; // Assuming you have an AdminView for admins
+import {Container} from 'react-bootstrap';
 
 export default function Products() {
     const { user } = useContext(UserContext); // Access user context
@@ -36,11 +37,13 @@ export default function Products() {
 
     return (
         <>
+        <Container>
             {user.isAdmin ? (
                 <AdminView productsData={products} fetchData={fetchData} /> // Render AdminView for admins
             ) : (
                 <UserView productsData={products} /> // Render UserView for regular users
             )}
+            </Container>
         </>
     );
 }

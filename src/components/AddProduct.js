@@ -3,6 +3,8 @@ import { Form, Button } from 'react-bootstrap';
 import { Navigate, useNavigate } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 import { Notyf } from 'notyf';
+import {Container} from 'react-bootstrap';
+
 
 export default function AddProduct() {
     const notyf = new Notyf();
@@ -67,7 +69,8 @@ export default function AddProduct() {
         user.isAdmin === false ? (
             <Navigate to="/products" />
         ) : (
-            <>
+            <>  
+            <Container>
                 <h1 className="my-5 text-center">Add Product</h1>
                 <Form onSubmit={e => createProduct(e)}>
 
@@ -123,6 +126,7 @@ export default function AddProduct() {
                     </Form.Group>
                     <Button variant="primary" type="submit" className="my-5">Submit</Button>
                 </Form>
+                </Container>
             </>
         )
     );

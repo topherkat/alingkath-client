@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 import AppNavbar from './components/AppNavbar';
 
 
-
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import Products  from "./pages/Products";
@@ -77,10 +77,10 @@ function App() {
       <UserProvider value={{ user, setUser, unsetUser }}>
         <Router>
           <AppNavbar />
-          <Container>
+          <Container fluid>
             <Routes>
              
-
+              <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path = "/logout" element={ <Logout /> } />
               <Route path = "/products" element={ <Products /> } />
