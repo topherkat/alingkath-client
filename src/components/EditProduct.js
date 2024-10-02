@@ -60,7 +60,7 @@ export default function EditProduct({ product, fetchData }) {
 
     return (
         <>
-            <Button variant="primary" size="sm" onClick={openEdit}>Edit</Button>
+            <Button variant="warning" size="sm" onClick={openEdit}>Edit</Button>
 
             {/* Edit Product Modal */}
             <Modal show={showEdit} onHide={closeEdit}>

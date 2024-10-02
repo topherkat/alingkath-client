@@ -1,57 +1,75 @@
 import { useState, useEffect } from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Dropdown } from 'react-bootstrap';
 import EditProduct from './EditProduct';  // Assuming you have EditProduct component
 import ArchiveProduct from './ArchiveProduct';  // Assuming you have ArchiveProduct component
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
 export default function AdminView({ productsData, fetchData }) {
     const [products, setProducts] = useState([]);
+    const [sortKey, setSortKey] = useState('category'); // Default sort by category
+    const [sortOrder, setSortOrder] = useState('asc'); // Default sort order
+
+    // Function to sort products based on the selected key and order
+    const sortProducts = (key, order) => {
+        const sortedProducts = [...productsData].sort((a, b) => {
+            const valueA = a[key].toString().toLowerCase(); // Convert to string for comparison
+            const valueB = b[key].toString().toLowerCase();
+
+            if (order === 'asc') {
+                return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+            } else {
+                return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+            }
+        });
+
+        setProducts(sortedProducts);
+    };
 
     // Getting the productsData from the products page
     useEffect(() => {
-        // Sort productsData by category before mapping
-        const sortedProducts = [...productsData].sort((a, b) => {
-            if (a.category < b.category) return -1;
-            if (a.category > b.category) return 1;
-            return 0;
-        });
+        sortProducts(sortKey, sortOrder); // Sort products whenever productsData changes
+    }, [productsData, sortKey, sortOrder]);
 
-        const productsArr = sortedProducts.map(product => {
-            return (
-                <tr key={product._id}>
-                    {/* Show Category and Name */}
-                    <td>{product.category}</td>
-                    <td>{product.name}</td>
-                    {/* Hide Description on small devices */}
-                    <td className="d-none d-md-table-cell">{product.description}</td>
-                    {/* Show Price */}
-                    <td>{product.price}</td>
-                    {/* Show Availability */}
-                    <td className={product.isActive ? "text-success" : "text-danger"}>
-                        {product.isActive ? "Available" : "Unavailable"}
-                    </td>
-                    {/* Show Edit and Archive Actions */}
-                     <td>
-                        <td>
-                            <div className="d-flex flex-column flex-sm-row gap-2">
-                                <EditProduct product={product} fetchData={fetchData} />
-                                <ArchiveProduct product={product} isActive={product.isActive} fetchData={fetchData} />
-                            </div>
-                        </td>
-                     </td>
-
-                </tr>
-            );
-        });
-
-        setProducts(productsArr);
-    }, [productsData]);
+    // Handle sort key change
+    const handleSortChange = (key) => {
+        if (key === sortKey) {
+            // If the same key is clicked, toggle the order
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        } else {
+            // Set new key and reset order to ascending
+            setSortKey(key);
+            setSortOrder('asc');
+        }
+    };
 
     return (
         <>
             <h1 className="text-center my-4">Admin Dashboard</h1>
-            
+
+            {/* Sorting Dropdown */}
+            <div className="text-end mb-3">
+                <Dropdown>
+                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                        Sort by: {sortKey.charAt(0).toUpperCase() + sortKey.slice(1)} ({sortOrder})
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => handleSortChange('category')}>
+                            Category
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortChange('name')}>
+                            Name
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortChange('price')}>
+                            Price
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortChange('isActive')}>
+                            Availability
+                        </Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+            </div>
+
             <Table striped bordered hover responsive>
                 <thead>
                     <tr className="text-center">
@@ -64,9 +82,25 @@ export default function AdminView({ productsData, fetchData }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {products}
+                    {products.map(product => (
+                        <tr key={product._id}>
+                            <td>{product.category}</td>
+                            <td>{product.name}</td>
+                            <td className="d-none d-md-table-cell">{product.description}</td>
+                            <td>{product.price}</td>
+                            <td className={product.isActive ? "text-success" : "text-danger"}>
+                                {product.isActive ? "Available" : "Unavailable"}
+                            </td>
+                            <td>
+                                <div className="d-flex flex-column flex-sm-row gap-2">
+                                    <EditProduct product={product} fetchData={fetchData} />
+                                    <ArchiveProduct product={product} isActive={product.isActive} fetchData={fetchData} />
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
-            </Table>    
+            </Table>
         </>
     );
 }
