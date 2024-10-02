@@ -5,7 +5,6 @@ import UserContext from '../context/UserContext';
 import { Notyf } from 'notyf';
 import {Container} from 'react-bootstrap';
 
-
 export default function AddProduct() {
     const notyf = new Notyf();
     const navigate = useNavigate();
@@ -15,15 +14,14 @@ export default function AddProduct() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
-    const [category, setCategory] = useState(""); // New field for category
-    const [isActive, setIsActive] = useState(true); // Field for isActive
+    const [category, setCategory] = useState("");
+    const [imageUrl, setImageUrl] = useState(""); // New field for image URL
+    const [isActive, setIsActive] = useState(true);
 
     function createProduct(e) {
-        // Prevent the default form submission
         e.preventDefault();
 
         let token = localStorage.getItem('token');
-        console.log(token);
 
         fetch(`${process.env.REACT_APP_API_URL}/products/add`, {
             method: 'POST',
@@ -34,35 +32,35 @@ export default function AddProduct() {
             body: JSON.stringify({
                 name: name,
                 description: description,
-                price: parseFloat(price), // Ensure price is a number
-                category: category, // Include the category
-                isActive: isActive // Include isActive
+                price: parseFloat(price), 
+                category: category, 
+                imageUrl: imageUrl, // Include the image URL
+                isActive: isActive 
             })
         })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data); // Log response data
+        .then(res => res.json())
+        .then(data => {
+            if (data.message === "Product already exists") {
+                notyf.error("Error: Product already exists.");
+            } else if (data.success === true) {
+                // Clear input fields after successful submission
+                setName("");
+                setDescription("");
+                setPrice("");
+                setCategory("");
+                setImageUrl(""); // Reset image URL
+                setIsActive(true);
 
-                if (data.message === "Product already exists") {
-                    notyf.error("Error: Product already exists.");
-                } else if (data.success === true) {
-                    // Clear input fields after successful submission
-                    setName("");
-                    setDescription("");
-                    setPrice("");
-                    setCategory(""); // Reset category
-                    setIsActive(true); // Reset isActive to default value
-
-                    notyf.success("Product Creation Successful");
-                    navigate("/products"); // Navigate to the products page
-                } else {
-                    notyf.error("Error: Something Went Wrong.");
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
+                notyf.success("Product Creation Successful");
+                navigate("/products");
+            } else {
                 notyf.error("Error: Something Went Wrong.");
-            });
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            notyf.error("Error: Something Went Wrong.");
+        });
     }
 
     return (
@@ -72,9 +70,8 @@ export default function AddProduct() {
             <>  
             <Container>
                 <h1 className="my-5 text-center">Add Product</h1>
-                <Form onSubmit={e => createProduct(e)}>
-
-                	<Form.Group>
+                <Form onSubmit={createProduct}>
+                    <Form.Group>
                         <Form.Label>Category:</Form.Label>
                         <Form.Control
                             type="text"
@@ -95,6 +92,7 @@ export default function AddProduct() {
                             onChange={e => setName(e.target.value)}
                         />
                     </Form.Group>
+
                     <Form.Group>
                         <Form.Label>Description:</Form.Label>
                         <Form.Control
@@ -105,6 +103,7 @@ export default function AddProduct() {
                             onChange={e => setDescription(e.target.value)}
                         />
                     </Form.Group>
+
                     <Form.Group>
                         <Form.Label>Price:</Form.Label>
                         <Form.Control
@@ -115,7 +114,17 @@ export default function AddProduct() {
                             onChange={e => setPrice(e.target.value)}
                         />
                     </Form.Group>
-                    
+
+                    <Form.Group>
+                        <Form.Label>Image URL:</Form.Label> {/* New Image URL field */}
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter Product Image URL"
+                            value={imageUrl}
+                            onChange={e => setImageUrl(e.target.value)}
+                        />
+                    </Form.Group>
+
                     <Form.Group>
                         <Form.Check
                             type="checkbox"
@@ -124,9 +133,10 @@ export default function AddProduct() {
                             onChange={e => setIsActive(e.target.checked)}
                         />
                     </Form.Group>
+
                     <Button variant="primary" type="submit" className="my-5">Submit</Button>
                 </Form>
-                </Container>
+            </Container>
             </>
         )
     );

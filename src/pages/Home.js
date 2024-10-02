@@ -43,7 +43,17 @@ export default function Home() {
                         products.slice(0, 3).map(product => ( // Display only the first 3 products
                             <Col md={4} className="mb-4" key={product._id}>
                                 <Card>
-                                    <Card.Img variant="top" src={ "https://via.placeholder.com/300"} alt={product.name} />
+                                    {/* Add inline styles to make the image uniform */}
+                                    <Card.Img 
+                                        variant="top" 
+                                        src={product.imageUrl} 
+                                        alt={product.name} 
+                                        style={{ 
+                                            height: "300px", 
+                                            width: "100%", 
+                                            objectFit: "cover" 
+                                        }} 
+                                    />
                                     <Card.Body>
                                         <Card.Title>{product.name}</Card.Title>
                                         <Card.Text>

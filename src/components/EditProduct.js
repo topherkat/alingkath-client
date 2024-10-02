@@ -13,6 +13,7 @@ export default function EditProduct({ product, fetchData }) {
     const [description, setDescription] = useState(product.description);
     const [price, setPrice] = useState(product.price);
     const [category, setCategory] = useState(product.category);
+    const [imageUrl, setImageUrl] = useState(product.imageUrl); // New field for image URL
     const [isActive, setIsActive] = useState(product.isActive);
 
     const [showEdit, setShowEdit] = useState(false);
@@ -32,6 +33,7 @@ export default function EditProduct({ product, fetchData }) {
                 description: description,
                 price: price,
                 category: category,
+                imageUrl: imageUrl, // Include imageUrl in the update
                 isActive: isActive
             })
         })
@@ -72,17 +74,16 @@ export default function EditProduct({ product, fetchData }) {
 
                     <Modal.Body>
 
-	                    <Form.Group controlId="productCategory">
-	                        <Form.Label>Category</Form.Label>
-	                        <Form.Control
-	                            type="text"
-	                            value={category}
-	                            onChange={e => setCategory(e.target.value)}
-	                            required
-	                        />
-	                    </Form.Group>
+                        <Form.Group controlId="productCategory">
+                            <Form.Label>Category</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={category}
+                                onChange={e => setCategory(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
 
-                    
                         <Form.Group controlId="productName">
                             <Form.Label>Name</Form.Label>
                             <Form.Control
@@ -114,7 +115,15 @@ export default function EditProduct({ product, fetchData }) {
                             />
                         </Form.Group>
 
-                       
+                        <Form.Group controlId="productImageUrl">
+                            <Form.Label>Image URL</Form.Label> {/* New Image URL field */}
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter Product Image URL"
+                                value={imageUrl}
+                                onChange={e => setImageUrl(e.target.value)}
+                            />
+                        </Form.Group>
 
                         <Form.Group controlId="productIsActive">
                             <Form.Check
