@@ -73,27 +73,25 @@ export default function AdminView({ productsData, fetchData }) {
                 </Dropdown>
             </div>
 
-            <Table striped bordered hover responsive className="mb-5">
+            <Table striped bordered hover responsive className="mb-5 w-100">
                 <thead>
                     <tr className="text-center">
-                        <th>Category</th>
+                        <th className="d-none d-md-table-cell">Category</th>
                         <th>Name</th>
                         <th className="d-none d-md-table-cell">Description</th>
                         <th>Price</th>
-                        <th className="d-none d-md-table-cell">Availability</th>
+                        
                         <th colSpan="1">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {products.map(product => (
                         <tr key={product._id}>
-                            <td>{product.category}</td>
+                            <td className="d-none d-md-table-cell">{product.category}</td>
                             <td>{product.name}</td>
                             <td className="d-none d-md-table-cell">{product.description}</td>
                             <td>{product.price}</td>
-                            <td className={product.isActive ? "text-success" : "text-danger"}>
-                                {product.isActive ? "Available" : "Unavailable"}
-                            </td>
+                           
                             <td>
                                 <div className="d-flex flex-column flex-sm-row gap-2">
                                     <EditProduct product={product} fetchData={fetchData} />
