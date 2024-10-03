@@ -56,9 +56,9 @@ export default function ArchiveProduct({ product, isActive, fetchData }) {
     return (
         <>
             {isActive ?
-                <Button variant="danger" size="sm" onClick={archiveToggle}>Archive</Button>
+                <Button variant="success" size="sm" onClick={archiveToggle}>Available</Button>
                 :
-                <Button variant="success" size="sm" onClick={activateToggle}>Activate</Button>
+                <Button variant="danger" size="sm" onClick={activateToggle}>Unavailable</Button>
             }
         </>
     );
