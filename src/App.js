@@ -8,6 +8,8 @@ import AppNavbar from './components/AppNavbar';
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
+import Register from "./pages/Register";
+
 import Products  from "./pages/Products";
 import AddProduct from "./components/AddProduct"; 
 
@@ -69,12 +71,10 @@ function App() {
       }
     })
     .catch(error => {
-          if (error.toString().includes("TypeError: Failed to fetch")) {
+          if (error.toString().includes("TypeError: Failed to fetch") || error.toString().includes("WebSocket")) {
             notyf.error("Data not yet available. Please wait."); // Handle errors
         
           }
-          
-           
     });
   }
 
@@ -95,6 +95,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path = "/logout" element={ <Logout /> } />
+              <Route path="/register" element={<Register />} />
+
               <Route path = "/products" element={ <Products /> } />
               <Route path = "/add-product" element={ <AddProduct /> } />
               <Route path="*" element={<Error />} />
