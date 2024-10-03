@@ -3,7 +3,7 @@ import UserContext from "../context/UserContext";
 import {Navigate} from "react-router-dom";
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { Notyf } from 'notyf'; // imports the notyf module
-import 'notyf/notyf.min.css'; // imports the style for notyf boxes
+
 
 export default function Login() {
 
@@ -64,6 +64,12 @@ export default function Login() {
                 notyf.error(`${email} does not exist`);
             }
 
+        })
+        .catch(error =>{
+            if (error.toString().includes("TypeError: Failed to fetch")) {
+              notyf.error("Data not yet available. Please wait."); // Handle errors
+            
+            }
         })
 
     }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Table, Dropdown } from 'react-bootstrap';
+import { Table, Dropdown, Button } from 'react-bootstrap';
 import EditProduct from './EditProduct';  // Assuming you have EditProduct component
 import ArchiveProduct from './ArchiveProduct';  // Assuming you have ArchiveProduct component
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -46,8 +46,11 @@ export default function AdminView({ productsData, fetchData }) {
         <>
             <h1 className="text-center my-4">Admin Dashboard</h1>
 
-            {/* Sorting Dropdown */}
-            <div className="text-end mb-3">
+            
+            <div className="mb-3 d-flex gap-2 justify-content-center">
+
+                <a href="/add-product"><Button variant="secondary">Add Course</Button></a>
+
                 <Dropdown>
                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                         Sort by: {sortKey.charAt(0).toUpperCase() + sortKey.slice(1)} ({sortOrder})
@@ -70,7 +73,7 @@ export default function AdminView({ productsData, fetchData }) {
                 </Dropdown>
             </div>
 
-            <Table striped bordered hover responsive>
+            <Table striped bordered hover responsive className="mb-5">
                 <thead>
                     <tr className="text-center">
                         <th>Category</th>

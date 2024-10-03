@@ -9,7 +9,7 @@ export default function ProductCard({ productProp }) {
         <div className="mb-3 col-6 col-md-3">
             <Card className="h-100">
                 {/* Display product image */}
-                <Card.Img variant="top" src={imageUrl} alt={name} style={{ objectFit: "cover", height: "200px", width: "200px", margin: "auto" }} className="mt-4" />
+                <Card.Img variant="top" src={imageUrl} alt={name} style={{ objectFit: "cover",  height: "200px"}} className="mt-4 w-100" />
                 
                 <Card.Body>
                     <Card.Title className="text-success">{name}</Card.Title>

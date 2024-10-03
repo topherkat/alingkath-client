@@ -18,7 +18,11 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { Route, Routes } from 'react-router-dom';
 import { UserProvider } from "./context/UserContext"; 
 
+import { Notyf } from 'notyf'; // imports the notyf module
+import 'notyf/notyf.min.css'; // imports the style for notyf boxes
+
 function App() {
+   const notyf = new Notyf(); // <---
   const [user, setUser] = useState({
     id: null,
     email: null,
@@ -63,6 +67,14 @@ function App() {
           isAdmin: null
         });
       }
+    })
+    .catch(error => {
+          if (error.toString().includes("TypeError: Failed to fetch")) {
+            notyf.error("Data not yet available. Please wait."); // Handle errors
+        
+          }
+          
+           
     });
   }
 
