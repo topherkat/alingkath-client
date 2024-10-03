@@ -49,7 +49,7 @@ export default function AdminView({ productsData, fetchData }) {
             
             <div className="mb-3 d-flex gap-2 justify-content-center">
 
-                <a href="/add-product"><Button variant="secondary">Add Course</Button></a>
+                <a href="/add-product"><Button variant="secondary">Add Product</Button></a>
 
                 <Dropdown>
                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
