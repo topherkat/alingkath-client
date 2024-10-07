@@ -1,24 +1,23 @@
 import { useState, useEffect } from 'react';
-import { Table, Dropdown, Button } from 'react-bootstrap';
+import { Table, Dropdown, Button, Pagination } from 'react-bootstrap';
 import EditProduct from './EditProduct';  // Assuming you have EditProduct component
 import ArchiveProduct from './ArchiveProduct'; 
-
 import { Notyf } from 'notyf'; 
 
-
 export default function AdminView({ productsData, fetchData }) {
-        const notyf = new Notyf(); // <---
-    
-
+    const notyf = new Notyf(); 
     const [products, setProducts] = useState([]);
     const [sortKey, setSortKey] = useState('category'); // Default sort by category
     const [sortOrder, setSortOrder] = useState('asc'); // Default sort order
-    const [productName,setProductName] = useState("");
-
+    const [productName, setProductName] = useState("");
+    
+    const [currentPage, setCurrentPage] = useState(1); // Current page
+    const productsPerPage = 20; // Products per page
+    
     // Function to sort products based on the selected key and order
     const sortProducts = (key, order) => {
         const sortedProducts = [...productsData].sort((a, b) => {
-            const valueA = a[key].toString().toLowerCase(); // Convert to string for comparison
+            const valueA = a[key].toString().toLowerCase();
             const valueB = b[key].toString().toLowerCase();
 
             if (order === 'asc') {
@@ -48,69 +47,52 @@ export default function AdminView({ productsData, fetchData }) {
         }
     };
 
-
-
-
+    // Handle product search
     function searchProduct(e) {
-
-        // Prevents page redirection via form submission
         e.preventDefault();
         fetch(`${process.env.REACT_APP_API_URL}/products/search-products`, {
             method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-
-                name: productName
-
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: productName })
         })
         .then(res => res.json())
         .then(data => {
-
             setProducts(data);
         })
-        .catch(error =>{
-
-            notyf.error(error);
-            if (error.toString().includes("TypeError: Failed to fetch")) {
-              notyf.error("Data not yet available. Please wait."); // Handle errors
-            
-            }
-        })
-
+        .catch(error => {
+            notyf.error("Error fetching products");
+        });
     }
 
+    // Pagination logic
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(products.length / productsPerPage);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
         <>
-
-
-
-           
-
             <h1 className="text-center my-4">Admin Dashboard</h1>
 
-
+            {/* Search Form */}
             <form onSubmit={searchProduct} className="my-4">
-                <div className="form-group d-flex gap-2 col-12 col-md-10 m-auto ">
-                 
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="productName"
-                    value={productName}
-                    onChange={(e) => setProductName(e.target.value)}   
-                    placeholder="Input to search a product"
-                  />
-
-                   <button type="submit" className="btn btn-success h-100">Search</button>
+                <div className="form-group d-flex gap-2 col-12 col-md-10 m-auto">
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="productName"
+                        value={productName}
+                        onChange={(e) => setProductName(e.target.value)}   
+                        placeholder="Input to search a product"
+                    />
+                    <button type="submit" className="btn btn-success h-100">Search</button>
                 </div>
-               
-              </form>
+            </form>
 
-               <div className=" mb-3 me-2 d-flex gap-2 justify-content-end">
+            {/* Sort Dropdown */}
+            <div className="mb-3 me-2 d-flex gap-2 justify-content-end">
                 <a href="/add-product"><Button variant="dark">+ Product</Button></a>
                 <Dropdown>
                     <Dropdown.Toggle variant="light" id="dropdown-basic">
@@ -118,25 +100,15 @@ export default function AdminView({ productsData, fetchData }) {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => handleSortChange('category')}>
-                            Category
-                        </Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleSortChange('name')}>
-                            Name
-                        </Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleSortChange('price')}>
-                            Price
-                        </Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleSortChange('isActive')}>
-                            Availability
-                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortChange('category')}>Category</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortChange('name')}>Name</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortChange('price')}>Price</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortChange('isActive')}>Availability</Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
             </div>
 
-
-            
-
+            {/* Products Table */}
             <Table striped bordered hover responsive className="mb-5 w-100">
                 <thead>
                     <tr className="text-center">
@@ -144,18 +116,16 @@ export default function AdminView({ productsData, fetchData }) {
                         <th>Name</th>
                         <th className="d-none d-md-table-cell">Description</th>
                         <th>Price</th>
-                        
-                        <th colSpan="1">Actions</th>
+                        <th colSpan="1">Info</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {products.map(product => (
+                    {currentProducts.map(product => (
                         <tr key={product._id}>
                             <td className="d-none d-md-table-cell">{product.category}</td>
                             <td>{product.name}</td>
                             <td className="d-none d-md-table-cell">{product.description}</td>
                             <td>{product.price}</td>
-                           
                             <td>
                                 <div className="d-flex flex-column flex-sm-row gap-2">
                                     <EditProduct product={product} fetchData={fetchData} />
@@ -166,6 +136,21 @@ export default function AdminView({ productsData, fetchData }) {
                     ))}
                 </tbody>
             </Table>
+
+            {/* Pagination */}
+             <Pagination className="d-flex justify-content-center mb-5">
+                 {[...Array(totalPages).keys()].map(pageNumber => (
+                     <Pagination.Item
+                         key={pageNumber + 1}
+                         active={currentPage === pageNumber + 1}
+                         onClick={() => paginate(pageNumber + 1)}
+                     >
+                         {pageNumber + 1}
+                     </Pagination.Item>
+                 ))}
+             </Pagination>
+
+
         </>
     );
 }

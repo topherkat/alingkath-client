@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 import './App.css';
+
 import Container from 'react-bootstrap/Container';
 
 import AppNavbar from './components/AppNavbar';
@@ -27,6 +29,7 @@ import { UserProvider } from "./context/UserContext";
 
 import { Notyf } from 'notyf'; // imports the notyf module
 import 'notyf/notyf.min.css'; // imports the style for notyf boxes
+
 
 function App() {
    const notyf = new Notyf(); // <---
