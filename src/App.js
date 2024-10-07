@@ -13,6 +13,11 @@ import Register from "./pages/Register";
 import Products  from "./pages/Products";
 import AddProduct from "./components/AddProduct"; 
 
+
+import Cart  from "./pages/Cart";
+import Orders  from "./pages/Orders";
+import OrderHistory  from "./pages/OrderHistory";
+
 import Error from "./pages/Error";
 
 
@@ -99,6 +104,12 @@ function App() {
 
               <Route path = "/products" element={ <Products /> } />
               <Route path = "/add-product" element={ <AddProduct /> } />
+
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/order-history" element={<OrderHistory />} />
+
+
               <Route path="*" element={<Error />} />
 
 

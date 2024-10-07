@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import UserContext from "../context/UserContext";
 import {Navigate} from "react-router-dom";
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button, Row, Col, Container } from 'react-bootstrap';
 import { Notyf } from 'notyf'; // imports the notyf module
 
 
@@ -111,10 +111,11 @@ export default function Login() {
     }, [email, password]);
 
     return (
-        (user.id !== null) ?
+        (user.id != null || user.id != undefined) ?
         <Navigate to="/products" />
         :
-        <Form onSubmit={(e) => authenticate(e)} className="my-5">
+        <Container fluid className="d-flex justify-content-center align-items-center mt-5 pt-5">
+        <Form onSubmit={(e) => authenticate(e)} className="col-12 col-md-6 ">
             <h1 className="text-center">Login</h1>
             <Row className="justify-content-center">
                 <Col md={6}> {/* Adjust the column size as needed */}
@@ -154,5 +155,6 @@ export default function Login() {
                 </Col>
             </Row>
         </Form>
+        </Container>
     );
 }

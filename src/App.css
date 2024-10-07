@@ -3,6 +3,7 @@
     padding: 0;
     box-sizing: border-box; /* Include padding and border in element's total width and height */
     font-family: "Montserrat", sans-serif;
+    font-size: 14px;
 }
 /*
 .form-control {
@@ -10,3 +11,4 @@
     margin: auto; 
 }
 */
+

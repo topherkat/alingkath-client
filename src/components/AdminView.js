@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Table, Dropdown, Button } from 'react-bootstrap';
 import EditProduct from './EditProduct';  // Assuming you have EditProduct component
-import ArchiveProduct from './ArchiveProduct';  // Assuming you have ArchiveProduct component
-import 'bootstrap/dist/css/bootstrap.min.css';
+import ArchiveProduct from './ArchiveProduct'; 
+
+import { Notyf } from 'notyf'; 
+
 
 export default function AdminView({ productsData, fetchData }) {
+        const notyf = new Notyf(); // <---
+    
+
     const [products, setProducts] = useState([]);
     const [sortKey, setSortKey] = useState('category'); // Default sort by category
     const [sortOrder, setSortOrder] = useState('asc'); // Default sort order
+    const [productName,setProductName] = useState("");
 
     // Function to sort products based on the selected key and order
     const sortProducts = (key, order) => {
@@ -42,17 +48,72 @@ export default function AdminView({ productsData, fetchData }) {
         }
     };
 
+
+
+
+    function searchProduct(e) {
+
+        // Prevents page redirection via form submission
+        e.preventDefault();
+        fetch(`${process.env.REACT_APP_API_URL}/products/search-products`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+
+                name: productName
+
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            setProducts(data);
+        })
+        .catch(error =>{
+
+            notyf.error(error);
+            if (error.toString().includes("TypeError: Failed to fetch")) {
+              notyf.error("Data not yet available. Please wait."); // Handle errors
+            
+            }
+        })
+
+    }
+
+
     return (
         <>
+
+
+
+           
+
             <h1 className="text-center my-4">Admin Dashboard</h1>
 
-            
-            <div className="mb-3 d-flex gap-2 justify-content-center">
 
-                <a href="/add-product"><Button variant="secondary">Add Product</Button></a>
+            <form onSubmit={searchProduct} className="my-4">
+                <div className="form-group d-flex gap-2 col-12 col-md-10 m-auto ">
+                 
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="productName"
+                    value={productName}
+                    onChange={(e) => setProductName(e.target.value)}   
+                    placeholder="Input to search a product"
+                  />
 
+                   <button type="submit" className="btn btn-success h-100">Search</button>
+                </div>
+               
+              </form>
+
+               <div className=" mb-3 me-2 d-flex gap-2 justify-content-end">
+                <a href="/add-product"><Button variant="dark">+ Product</Button></a>
                 <Dropdown>
-                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                    <Dropdown.Toggle variant="light" id="dropdown-basic">
                         Sort by: {sortKey.charAt(0).toUpperCase() + sortKey.slice(1)} ({sortOrder})
                     </Dropdown.Toggle>
 
@@ -72,6 +133,9 @@ export default function AdminView({ productsData, fetchData }) {
                     </Dropdown.Menu>
                 </Dropdown>
             </div>
+
+
+            
 
             <Table striped bordered hover responsive className="mb-5 w-100">
                 <thead>
