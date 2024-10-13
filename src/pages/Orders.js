@@ -55,6 +55,9 @@ export default function Orders() {
                           <strong>Total Price:</strong> P {order.totalPrice}
                         </Card.Text>
                         <Card.Text>
+                          <strong>Order Type:</strong> {order.orderType}
+                        </Card.Text>
+                        <Card.Text>
                           <strong>Status:</strong> {order.status}
                         </Card.Text>
 

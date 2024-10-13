@@ -34,9 +34,12 @@ export default function AppNavbar(){
 		        
 		        {(user.id != null || user.id != undefined) ? 
 					(user.isAdmin == true) 
-						?
+						?	
 						<>	
 							<Nav.Link as={Link} to="/order-history">Orders</Nav.Link>
+							<Nav.Link as={Link} to="/users">Users</Nav.Link>
+							<Nav.Link as={Link} to="/manage-feedbacks">Feedbacks</Nav.Link>
+							<Nav.Link as={Link} to="/notes">Notes</Nav.Link>
 							<Nav.Link as={Link} to="/logout">Logout</Nav.Link>
 						</>
 						:
@@ -46,6 +49,7 @@ export default function AppNavbar(){
 								<FontAwesomeIcon icon={faCartShopping} className="h3"/>
 							</Nav.Link>
 							<Nav.Link as={NavLink} to="/orders" exact="true">Orders</Nav.Link>
+							<Nav.Link as={NavLink} to="/submit-feedback" exact="true">Feedback</Nav.Link>
 							<Nav.Link as={NavLink} to="/logout" exact="true">Logout</Nav.Link>
 
 						</>

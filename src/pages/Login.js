@@ -92,6 +92,7 @@ export default function Login() {
                 firstName: data.firstName,
                 lastName: data.lastName,
                 mobileNo: data.mobileNo,
+                facebookLink: data.facebookLink,
                 isAdmin: data.isAdmin
             })
         })

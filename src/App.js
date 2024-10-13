@@ -9,6 +9,7 @@ import AppNavbar from './components/AppNavbar';
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import Logout from "./pages/Logout";
 import Register from "./pages/Register";
 
@@ -20,6 +21,12 @@ import Cart  from "./pages/Cart";
 import Orders  from "./pages/Orders";
 import OrderHistory  from "./pages/OrderHistory";
 
+import Users  from "./pages/Users";
+
+
+import Notes from "./pages/Notes";
+import SubmitFeedback from "./pages/SubmitFeedback";
+import ManageFeedbacks from "./pages/ManageFeedbacks";
 import Error from "./pages/Error";
 
 
@@ -65,6 +72,7 @@ function App() {
           firstName: data.firstName,
           lastName: data.lastName,
           mobileNo: data.mobileNo,
+          facebookLink: data.facebookLink,
           isAdmin: data.isAdmin
         });
       } else {
@@ -74,6 +82,7 @@ function App() {
           firstName: null,
           lastName: null,
           mobileNo: null,
+          facebookLink: null,
           isAdmin: null
         });
       }
@@ -102,6 +111,7 @@ function App() {
              
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
+              <Route path = "/profile" element={ <Profile /> } />
               <Route path = "/logout" element={ <Logout /> } />
               <Route path="/register" element={<Register />} />
 
@@ -111,6 +121,11 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/order-history" element={<OrderHistory />} />
+              <Route path="/users" element={<Users />} />
+
+              <Route path="/notes" element={<Notes />} />
+              <Route path="/submit-feedback" element={<SubmitFeedback />} />
+              <Route path="/manage-feedbacks" element={<ManageFeedbacks />} />
 
 
               <Route path="*" element={<Error />} />

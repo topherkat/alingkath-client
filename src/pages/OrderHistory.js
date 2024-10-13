@@ -20,34 +20,10 @@ export default function OrderHistory() {
     setVisibleOrders((prevState) => ({
       ...prevState,
       [orderId]: !prevState[orderId],
-    }));
-
-    if (!visibleOrders[orderId]) {
-      getUserDetails(userId, orderId);
-    }
+    })); 
   };
 
-  const getUserDetails = (userId, orderId) => {
-    const token = localStorage.getItem('token');
-
-    fetch(`${process.env.REACT_APP_API_URL}/users/${userId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setUserInfo((prevState) => ({
-          ...prevState,
-          [orderId]: data,
-        }));
-      })
-      .catch((error) => {
-        console.error('Error fetching user data:', error);
-      });
-  };
+  
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -107,10 +83,22 @@ export default function OrderHistory() {
       .join('<br/>');
 
     const detailsHtml = `
+
+      <strong>User Info</strong>
+     <strong>User ID: </strong>  ${order.userId} <br />
+     <strong>Name : </strong>  ${order.userName} <br />
+      <strong>Email : </strong>  ${order.userEmail} <br />
+      <strong>Contact Number : </strong> ${order.userContactNumber} <br />
+      <strong>Address : </strong>${order.userAddress} <br />
+
+     
       <strong>Products Ordered:</strong><br/>
       ${products}<br/>
       <hr/>
-      <strong>Total Price: P${order.totalPrice}</strong>
+
+      <strong>Total Price: P${order.totalPrice}</strong><br />
+      <hr/>
+       <strong>Order Type: </strong> ${order.orderType} <br />
     `;
 
     Swal.fire({
@@ -191,37 +179,21 @@ export default function OrderHistory() {
                 <Table striped bordered hover className="mt-4">
                   <thead>
                     <tr className="row">
-                      <th className="col-md-3 d-none d-md-table-cell">Order ID</th>
-                      <th className="col-5 col-md-4">User Id</th>
+                      <th className="col d-none d-md-table-cell">Order ID</th>
+                     
                       <th className="col-md-1 d-none d-md-table-cell">Total</th>
-                      <th className="col-2 col-md-2">Order Date</th>
-                      <th className="col-5 col-md-2">Details</th>
+                      <th className="col-2 col-md-3">Order Date</th>
+                      <th className="col-5 col-md-3">Details</th>
                     </tr>
                   </thead>
                   <tbody>
                     {currentOrders.map((order) => (
                       <tr key={order._id} className="row">
-                        <td className="col-md-3 d-none d-md-table-cell">{order._id}</td>
-                        <td className="col-5 col-md-4">
-                          <button
-                            className="btn border mb-3"
-                            onClick={() => toggleUserInfo(order._id, order.userId)}
-                          >
-                            {visibleOrders[order._id] ? 'See Less' : order.userId}
-                          </button>
-
-                          {visibleOrders[order._id] && userInfo[order._id] && (
-                            <div className="mb-3">
-                              User ID: {order.userId} <br />
-                              Name: {userInfo[order._id].firstname} {userInfo[order._id].lastname} <br />
-                              Email: {userInfo[order._id].email} <br />
-                              Contact Number: {userInfo[order._id].contactNumber} <br />
-                            </div>
-                          )}
-                        </td>
+                        <td className="col d-none d-md-table-cell">{order._id}</td>
+                       
                         <td className="col-md-1 d-none d-md-table-cell">P {order.totalPrice}</td>
-                        <td className="col-2 col-md-2">{new Date(order.orderedOn).toLocaleDateString()}</td>
-                        <td className="col-5 col-md-2 d-flex flex-column gap-2">
+                        <td className="col-2 col-md-3">{new Date(order.orderedOn).toLocaleDateString()}</td>
+                        <td className="col-5 col-md-3 d-flex flex-column gap-2">
                           {order.status === "Pending" ? (
                             <Button
                               variant="danger"

@@ -12,16 +12,17 @@ export default function Register() {
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [email, setEmail] = useState("");
-	const [contactNumber, setContactNumber] = useState(""); // changed from number to string
+	const [contactNumber, setContactNumber] = useState(""); 
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
-	const [facebookLink, setFacebookLink] = useState(""); // New state for Facebook link
+	const [facebookLink, setFacebookLink] = useState(""); 
+	const [address, setAddress] = useState(""); // New state for address
 	const [isActive, setIsActive] = useState(false);
 
 	useEffect(() => {
 		// Update isActive based on input validity
-		setIsActive(firstName && lastName && email && contactNumber && password && confirmPassword && password === confirmPassword);
-	}, [firstName, lastName, email, contactNumber, password, confirmPassword]);
+		setIsActive(firstName && lastName && email && contactNumber && address && password && confirmPassword && password === confirmPassword);
+	}, [firstName, lastName, email, contactNumber, address, password, confirmPassword]);
 
 	function registerUser(e) {
 		e.preventDefault();
@@ -30,12 +31,13 @@ export default function Register() {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				firstname: firstName,  // changed to match schema
-				lastname: lastName,    // changed to match schema
+				firstname: firstName,  
+				lastname: lastName,    
 				email: email,
-				contactNumber: contactNumber, // changed to match schema
+				contactNumber: contactNumber, 
 				password: password,
-				facebookLink: facebookLink // Include Facebook link in the request
+				facebookLink: facebookLink,
+				address: address // Include address in the request
 			})
 		})
 		.then(res => res.json())
@@ -49,7 +51,8 @@ export default function Register() {
 				setContactNumber("");
 				setPassword("");
 				setConfirmPassword("");
-				setFacebookLink(""); // Reset Facebook link field
+				setFacebookLink("");
+				setAddress(""); // Reset address field
 			} else {
 				notyf.error(data.message || "Something went wrong");
 			}
@@ -100,7 +103,7 @@ export default function Register() {
 
 			<Form.Group>
 				<Form.Label>Contact No.:</Form.Label>
-				<Form.Control type="text"  // changed to text for flexibility
+				<Form.Control type="text" 
 					placeholder="Enter Contact Number" 
 					required 
 					value={contactNumber}
@@ -110,11 +113,20 @@ export default function Register() {
 
 			<Form.Group>
 				<Form.Label>Facebook Profile Link: </Form.Label>
-				<Form.Control type="text" // URL type for validation
+				<Form.Control type="text" 
 					placeholder="Enter Facebook Link" 
 					value={facebookLink}
 					onChange={e => setFacebookLink(e.target.value)}
+				/>
+			</Form.Group>
 
+			<Form.Group>
+				<Form.Label>Home Address : </Form.Label>
+				<Form.Control type="text" 
+					placeholder="Enter Address" 
+					required 
+					value={address}
+					onChange={e => setAddress(e.target.value)}
 				/>
 			</Form.Group>
 

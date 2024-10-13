@@ -9,7 +9,6 @@ import Swal from "sweetalert2";
 export default function Cart() {
 
   const {user, setUser } = useContext(UserContext); 
-
   const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]); // To store selected items
   const [totalPrice, setTotalPrice] = useState(0); // To store the total price of selected items
@@ -111,62 +110,89 @@ export default function Cart() {
 
   // Function to handle checkout for selected items
   const handleCheckoutSelected = () => { 
-    if (selectedItems.length === 0) {
+
+     if (selectedItems.length === 0) {
       alert("Please select items to checkout");
       return;
     }
 
-    const token = localStorage.getItem('token');
+    let orderType = "";
 
-    // Proceed to checkout with the selected items
-    fetch(`${process.env.REACT_APP_API_URL}/orders/checkout`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        productsOrdered: selectedItems
+    Swal.fire({
+      title: "Do you want to save the changes?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Pick-Up",
+      denyButtonText: `Delivery`
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        orderType = "Pick-Up";
+      } else if (result.isDenied) {
+        orderType = "Delivery";
+      }
+      else{
+        return;
+      }
+
+      const token = localStorage.getItem('token');
+
+      // Proceed to checkout with the selected items
+      fetch(`${process.env.REACT_APP_API_URL}/orders/checkout`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderType: orderType,
+          productsOrdered: selectedItems
+        })
       })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.message === "Checkout successful! Your order has been placed.") {
-          Swal.fire("Success", "Your order has been placed!", "success");
+        .then(res => res.json())
+        .then(data => {
+          if (data.message === "Checkout successful! Your order has been placed.") {
+            Swal.fire("Success", "Your order has been placed!", "success");
 
-          // After successful checkout, remove the selected items from the cart in the backend
-          const removalRequests = selectedItems.map(item => 
-            fetch(`${process.env.REACT_APP_API_URL}/cart/remove-from-cart/${item.productId}`, {
-              method: 'PATCH',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              }
-            })
-          );
+            // After successful checkout, remove the selected items from the cart in the backend
+            const removalRequests = selectedItems.map(item => 
+              fetch(`${process.env.REACT_APP_API_URL}/cart/remove-from-cart/${item.productId}`, {
+                method: 'PATCH',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                }
+              })
+            );
 
-          // Wait for all removal requests to finish
-          Promise.all(removalRequests)
-            .then(() => {
-              // Update the frontend to remove checked-out items from the cart
-              const remainingCartItems = cartItems.filter(cartItem => 
-                !selectedItems.some(selectedItem => selectedItem.productId === cartItem.productId)
-              );
-              setCartItems(remainingCartItems);
-              setSelectedItems([]); // Clear the selected items
-              setTotalPrice(remainingCartItems.reduce((acc, item) => acc + item.subtotal, 0)); // Recalculate total price for remaining items
-            })
-            .catch(() => {
-              Swal.fire("Error", "An error occurred while removing items from the cart", "error");
-            });
+            // Wait for all removal requests to finish
+            Promise.all(removalRequests)
+              .then(() => {
+                // Update the frontend to remove checked-out items from the cart
+                const remainingCartItems = cartItems.filter(cartItem => 
+                  !selectedItems.some(selectedItem => selectedItem.productId === cartItem.productId)
+                );
+                setCartItems(remainingCartItems);
+                setSelectedItems([]); // Clear the selected items
+                setTotalPrice(remainingCartItems.reduce((acc, item) => acc + item.subtotal, 0)); // Recalculate total price for remaining items
+              })
+              .catch(() => {
+                Swal.fire("Error", "An error occurred while removing items from the cart", "error");
+              });
 
-        } else {
-          Swal.fire("Error", data.message, "error");
-        }
-      })
-      .catch(() => {
-        Swal.fire("Error", "An error occurred during checkout", "error");
-      });
+          } else {
+            Swal.fire("Error", data.message, "error");
+          }
+        })
+        .catch(() => {
+          Swal.fire("Error", "An error occurred during checkout", "error");
+        });
+
+
+    });
+
+   
+    
   };
 
 
