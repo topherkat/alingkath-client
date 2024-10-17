@@ -81,9 +81,24 @@ export default function Notes() {
             <h2 className="text-center">Notes</h2>
 
             {/* Button to open modal for adding a new note */}
-            <div className="d-flex justify-content-end mb-3">
-            <Button variant="primary" onClick={handleAddNote} className="">
-                Add Note
+            <div className="d-flex justify-content-end mb-3 ">
+            <Button
+              variant="success"
+              onClick={handleAddNote}
+              className="rounded-circle"
+              style={{
+                position: 'fixed',
+                bottom: '20px', // distance from the bottom
+                right: '20px',  // distance from the right
+                zIndex: 1000,
+                height:  "60px", 
+                width:  "60px",
+                fontSize: '30px',
+                fontWeight: 'bold'
+                 // ensure it's above other elements
+              }}
+            >
+              +
             </Button>
              </div>
             {/* Modal for add/edit note */}

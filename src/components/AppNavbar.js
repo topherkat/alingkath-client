@@ -40,6 +40,7 @@ export default function AppNavbar(){
 							<Nav.Link as={Link} to="/users">Users</Nav.Link>
 							<Nav.Link as={Link} to="/manage-feedbacks">Feedbacks</Nav.Link>
 							<Nav.Link as={Link} to="/notes">Notes</Nav.Link>
+							<Nav.Link as={Link} to="/profile">Profile</Nav.Link>
 							<Nav.Link as={Link} to="/logout">Logout</Nav.Link>
 						</>
 						:
@@ -50,6 +51,7 @@ export default function AppNavbar(){
 							</Nav.Link>
 							<Nav.Link as={NavLink} to="/orders" exact="true">Orders</Nav.Link>
 							<Nav.Link as={NavLink} to="/submit-feedback" exact="true">Feedback</Nav.Link>
+							<Nav.Link as={Link} to="/profile">Profile</Nav.Link>
 							<Nav.Link as={NavLink} to="/logout" exact="true">Logout</Nav.Link>
 
 						</>
