@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Table, Dropdown, Button, Pagination } from 'react-bootstrap';
-import EditProduct from './EditProduct';  // Assuming you have EditProduct component
-import ArchiveProduct from './ArchiveProduct'; 
-import { Notyf } from 'notyf'; 
+import EditProduct from './EditProduct'; // Assuming you have EditProduct component
+import ArchiveProduct from './ArchiveProduct';
+import { Notyf } from 'notyf';
+import Swal from 'sweetalert2';
+
 
 export default function AdminView({ productsData, fetchData }) {
-    const notyf = new Notyf(); 
+    const notyf = new Notyf();
     const [products, setProducts] = useState([]);
     const [sortKey, setSortKey] = useState('category'); // Default sort by category
     const [sortOrder, setSortOrder] = useState('asc'); // Default sort order
     const [productName, setProductName] = useState("");
-    
+
     const [currentPage, setCurrentPage] = useState(1); // Current page
     const productsPerPage = 20; // Products per page
-    
+
     // Function to sort products based on the selected key and order
     const sortProducts = (key, order) => {
         const sortedProducts = [...productsData].sort((a, b) => {
@@ -55,18 +57,71 @@ export default function AdminView({ productsData, fetchData }) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: productName })
         })
-        .then(res => res.json())
-        .then(data => {
-            setProducts(data);
-        })
-        .catch(error => {
-            notyf.error("Error fetching products");
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.message === "No products found with the given name.") {
+                    notyf.error("No products found with the given name.");
+                } else {
+                    setProducts(data);
+                }
+            })
+            .catch(() => {
+                notyf.error("Error fetching products");
+            });
     }
+
+    // Delete product
+    const deleteProduct = (id) => {
+
+        Swal.fire({
+          title: "Are you sure you want to delete this product?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+              
+               fetch(`${process.env.REACT_APP_API_URL}/products/${id}`, {
+                   method: 'DELETE',
+                   headers: {
+                       'Content-Type': 'application/json',
+                       Authorization: `Bearer ${localStorage.getItem('token')}`
+                   }
+               })
+               .then(res => res.json())
+               .then(data => {
+
+                   console.log(data);
+
+                   if(data.message = "Product deleted successfully"){
+                       Swal.fire({
+                         title: `${data.message}`,
+                         text: ``,
+                         showConfirmButton: false,
+                         icon: "success"
+                       });
+                   }
+                  
+               })
+               .catch((error) => {
+                   console.log(error)
+                   notyf.error('Error deleting product');
+               });
+            }
+          
+        });
+
+
+        
+    };
 
     // Pagination logic
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+
     const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
     const totalPages = Math.ceil(products.length / productsPerPage);
 
@@ -84,7 +139,7 @@ export default function AdminView({ productsData, fetchData }) {
                         className="form-control"
                         id="productName"
                         value={productName}
-                        onChange={(e) => setProductName(e.target.value)}   
+                        onChange={(e) => setProductName(e.target.value)}
                         placeholder="Input to search a product"
                     />
                     <button type="submit" className="btn btn-success h-100">Search</button>
@@ -130,6 +185,12 @@ export default function AdminView({ productsData, fetchData }) {
                                 <div className="d-flex flex-column flex-sm-row gap-2">
                                     <EditProduct product={product} fetchData={fetchData} />
                                     <ArchiveProduct product={product} isActive={product.isActive} fetchData={fetchData} />
+                                    <Button
+                                        variant="light"
+                                        onClick={() => deleteProduct(product._id)}
+                                    >
+                                        <i className="fa-solid fa-trash"></i>
+                                    </Button>
                                 </div>
                             </td>
                         </tr>
@@ -138,19 +199,17 @@ export default function AdminView({ productsData, fetchData }) {
             </Table>
 
             {/* Pagination */}
-             <Pagination className="d-flex justify-content-center mb-5">
-                 {[...Array(totalPages).keys()].map(pageNumber => (
-                     <Pagination.Item
-                         key={pageNumber + 1}
-                         active={currentPage === pageNumber + 1}
-                         onClick={() => paginate(pageNumber + 1)}
-                     >
-                         {pageNumber + 1}
-                     </Pagination.Item>
-                 ))}
-             </Pagination>
-
-
+            <Pagination className="d-flex justify-content-center mb-5">
+                {[...Array(totalPages).keys()].map(pageNumber => (
+                    <Pagination.Item
+                        key={pageNumber + 1}
+                        active={currentPage === pageNumber + 1}
+                        onClick={() => paginate(pageNumber + 1)}
+                    >
+                        {pageNumber + 1}
+                    </Pagination.Item>
+                ))}
+            </Pagination>
         </>
     );
 }
