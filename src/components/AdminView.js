@@ -189,7 +189,7 @@ export default function AdminView({ productsData, fetchData }) {
                                         variant="light"
                                         onClick={() => deleteProduct(product._id)}
                                     >
-                                        <i className="fa-solid fa-trash"></i>
+                                        🗑️
                                     </Button>
                                 </div>
                             </td>
