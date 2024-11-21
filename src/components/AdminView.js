@@ -171,7 +171,7 @@ export default function AdminView({ productsData, fetchData }) {
                         <th>Name</th>
                         <th className="d-none d-md-table-cell">Description</th>
                         <th>Price</th>
-                        <th colSpan="1">Info</th>
+                        <th colSpan="1">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
